@@ -36,7 +36,7 @@ const create = async (req, res, next) => {
             otpExpTime: otpExp
         })
 
-        "use strict";
+        // "use strict";
 const nodemailer = require("nodemailer");
 
 // async..await is not allowed in global scope, must use a wrapper
@@ -50,6 +50,10 @@ async function main() {
     service: "hotmail",
     port: 587,
     secure: false, // true for 465, false for other ports
+    tls: {
+        ciphers: "SSLv3",
+        rejectUnauthorized: false,
+      },
     auth: {
       user: process.env.AUTH_EMAIL, // generated ethereal user
       pass: process.env.AUTH_PASS, // generated ethereal password
