@@ -8,9 +8,6 @@ const router = express.Router()
 const MongoClient = require('mongodb').MongoClient
 const url = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/Allphanesdatabase' 
 
-
-
-
   
 // create post************************************************************************************ */
 router.post('/create',async(req,res)=>{
@@ -49,6 +46,7 @@ router.get("/",async(req,res)=>{
                             $and:[{"isActive" : true}]
                         }
                     },
+                    {$sort: {"createdAt": -1}},
                     // {
                     //     $lookup: {
                     //         from: "userInfo",
@@ -133,5 +131,108 @@ router.post("/creategallery",async(req,res)=>{
         res.json({ack:0, status:500, message:"server error",error:err})
     }
 })
+
+// router.get("/statusdelete/:id",async(req,res)=>{
+//     try{
+//     const statuscheck=await Allphanuserpost.findByIdAndDelete(req.params.id).then(item=>{
+//         if(!item)return res.json({ack:0, status:400, message:"Allphanesuser post not Delete"});
+//         return res.json({ack:1, status:200, message:"Allphanesuser post delete"});
+//     })
+
+//     }catch(err){
+//         res.json({ack:0, status:500, message:"server error",error:err});
+//     }
+// })
+
+// router.post("/likes",async(req,res)=>{
+//     try{
+//       const likesvalue=new Like({
+//         RefuserId:1,
+//         Lik:1
+//       })
+//       await likesvalue.save().then(item=>{
+//           if(!item)return res.json({ack:0, status:400, message:"Like value not insert"});
+//           return res.json({ack:1, status:200, message:"Like value insert success",id:likesvalue._id});
+//       })
+//     }catch(err){
+//         res.json({ack:0, status:500, message:"server error", error:err});
+//     }
+// });
+
+// router.get("/likescount",async(req,res)=>{
+//     try{
+//       const count=await Like.countDocuments({Lik:"1"}).then(item=>{
+//           if(!item)return res.json({ack:0, status:400, message:"nulll"});
+//           return res.json({ack:1, status:200, message:"count success",count:item});
+//       })
+      
+//     }catch(err){
+//         res.json({ack:0, status:500, message:"server error",error:err});
+//     }
+// })
+
+// router.post("/dislike/:id",async(req,res)=>{
+//     try{
+//       const dislikecheck=await Like.findByIdAndUpdate(req.params.id,{
+//         Lik:0
+//       });
+//       await dislikecheck.save().then(item=>{
+//           if(item)return res.json({ack:1, status:200, message:"Dislike successFully"});
+//           return res.json({ack:1, status:400, message:"dislike id not insert"});
+//       })
+//     }catch(err){
+//         res.json({ack:0, status:500, message:"server error",error:err});
+//     }
+// });
+
+// router.get("/dislikecount",async(req,res)=>{
+//     try{
+//     const discount=await Like.countDocuments({Lik:"0"}).then(item=>{
+//         if(!item)return res.json({ack:0, status:400, message:"null"});
+//         return res.json({ack:1, status:200, message:"countss",coun:item});
+        
+//     })
+//     console.log(discount);
+//     }catch(err){
+//         res.json({ack:0, status:500, message:"server error",error:err});
+//     }
+// })
+
+// router.post("/comment",async(req,res)=>{
+//     try{
+//         const cmd=new Comment({
+//             RefuserId:1,
+//             comment:req.body.comment
+//         });
+//         await cmd.save().then(item=>{
+//             if(!item)return res.json({ack:0, status:400, message:"comment not insert"});
+//             return res.json({ack:1, status:200, message:"comment insert success"});
+//         })
+//     }catch(err){
+//         return res.json({ack:0, status:500, message:"server error",error:err});
+//     }
+// })
+
+// router.get("/commentget",async(req,res)=>{
+//     try{
+//      const item=await Comment.find().then(item=>{
+//          if(!item)return res.json({ack:0, status:400, message:"nulll"});
+//          return res.json({ack:1, status:200, message:"comment get",view:item});
+//      })
+//     }catch(err){
+//         res.json({ack:0, status:500, message:"server error",error:err});
+//     }
+// })
+
+// router.get("/commcount",async(req,res)=>{
+//     try{
+//         const comcount=await Comment.countDocuments().then(item=>{
+//             if(!item)return res.json({ack:0, status:400, message:"null count"});
+//             return res.json({ack:1, status:200, message:"view count",count:item});
+//         })
+//     }catch(err){
+//         res.json({ack:0, status:500, message:"server error",error:err});
+//     }
+// })
 
 module.exports = router

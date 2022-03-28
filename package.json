@@ -25,5 +25,8 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.13"
+  },
+  "engines": {
+    "node": "17.4.0"
   }
 }
