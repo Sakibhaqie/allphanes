@@ -48,12 +48,13 @@ async function main() {
   let transporter = nodemailer.createTransport({
     host: "smtp-mail.outlook.com",
     // service: "hotmail",
-    port: 587,
-    secure: false, // true for 465, false for other ports
+    // port: 587,
+    port: 465,
+    secure: true, // true for 465, false for other ports
     tls: {
         ciphers: "SSLv3",
         rejectUnauthorized: false,
-      },
+    },
     auth: {
       user: process.env.AUTH_EMAIL, // generated ethereal user
       pass: process.env.AUTH_PASS, // generated ethereal password
@@ -62,11 +63,11 @@ async function main() {
 
   // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: '"Allphanes OTP"'+ process.env.AUTH_EMAIL, // sender address
+    from: '"noreply@"'+ process.env.AUTH_EMAIL, // sender address
     to: email, // list of receivers
-    subject: "Hello ✔", // Subject line
+    subject: "Allphanes OTP", // Subject line
     // text: "Hello world?", // plain text body
-    html: "<h1>"+ randotp +"</h1>", // html body
+    html: "<h1>"+ randotp +"</h1><br><p>This OTP valid for 10 minutes</p>", // html body
   });
 
   console.log("Message sent: %s", info.messageId);
