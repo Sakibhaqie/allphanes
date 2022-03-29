@@ -42,22 +42,27 @@ const nodemailer = require("nodemailer");
 async function main() {
   // Generate test SMTP service account from ethereal.email
   // Only needed if you don't have a real mail account for testing
-  let testAccount = await nodemailer.createTestAccount();
+//   let testAccount = await nodemailer.createTestAccount();
 
   // create reusable transporter object using the default SMTP transport
-  let transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
+  let transporter = nodemailer.createTransport("SMTP",{
+    // host: "smtp.ethereal.email",
+    service: "hotmail",
     port: 587,
     secure: false, // true for 465, false for other ports
+    tls: {
+        ciphers: "SSLv3",
+        rejectUnauthorized: false,
+      },
     auth: {
-      user: testAccount.user, // generated ethereal user
-      pass: testAccount.pass, // generated ethereal password
+      user: process.env.AUTH_EMAIL, // generated ethereal user
+      pass: process.env.AUTH_PASS, // generated ethereal password
     },
   });
 
   // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: '"Allphanes OTP"'+ testAccount.user, // sender address
+    from: '"Allphanes OTP"'+ process.env.AUTH_EMAIL, // sender address
     to: email, // list of receivers
     subject: "Hello ✔", // Subject line
     // text: "Hello world?", // plain text body
