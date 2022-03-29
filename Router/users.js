@@ -45,9 +45,9 @@ async function main() {
 //   let testAccount = await nodemailer.createTestAccount();
 
   // create reusable transporter object using the default SMTP transport
-  let transporter = nodemailer.createTransport("SMTP",{
-    // host: "smtp.ethereal.email",
-    service: "hotmail",
+  let transporter = nodemailer.createTransport({
+    host: "smtp-mail.outlook.com",
+    // service: "hotmail",
     port: 587,
     secure: false, // true for 465, false for other ports
     tls: {
