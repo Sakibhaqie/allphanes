@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt")
 const nodemailer = require("nodemailer");
 
 // async..await is not allowed in global scope, must use a wrapper
-async function mail(email) {
+async function mail(info) {
 
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
@@ -29,13 +29,7 @@ async function mail(email) {
   });
 
   // send mail with defined transport object
-  await transporter.sendMail({
-    from: '"noreply@Allphanes"'+ process.env.AUTH_EMAIL, // sender address
-    to: email, // list of receivers
-    subject: "Allphanes OTP Verification", // Subject line
-    // text: "Hello world?", // plain text body
-    html: "<h1>"+ randotp +"</h1><br><p>This OTP valid for 10 minutes</p>", // html body
-  });
+  await transporter.sendMail(info);
 
 }
 // const cloudinary = require("cloudinary").v2;
@@ -70,7 +64,13 @@ const create = async (req, res, next) => {
         })
 
         // mail function 
-        await mail(email).catch(console.error);
+        let info = {
+            from: '"noreply@Allphanes"'+ process.env.AUTH_EMAIL, // sender address
+            to: email, // list of receivers
+            subject: "Allphanes OTP Verification", // Subject line
+            html: "<h1>"+ randotp +"</h1><br><p>This OTP valid for 10 minutes</p>", // html body
+        }
+        await mail(info).catch(console.error);
 
         await usersModel.findOne({ email: email, phone : phone })
         .then(user => {
