@@ -5,8 +5,8 @@ const config = require("../config")
 const usersModel = require("../Model/users")
 const router = express.Router()
 const bcrypt = require("bcrypt")
-"use strict";
-const nodemailer = require("nodemailer");
+"use strict"
+const nodemailer = require("nodemailer")
 
 // async..await is not allowed in global scope, must use a wrapper
 async function mail(info) {
@@ -26,20 +26,20 @@ async function mail(info) {
       user: process.env.AUTH_EMAIL, // generated ethereal user
       pass: process.env.AUTH_PASS, // generated ethereal password
     },
-  });
+  })
 
   // send mail with defined transport object
-  await transporter.sendMail(info);
+  await transporter.sendMail(info)
 
 }
-// const cloudinary = require("cloudinary").v2;
+// const cloudinary = require("cloudinary").v2
 
 // cloudinary.config({ 
 //     cloud_name: 'dyr5pe2er', 
 //     api_key: '468257612725834', 
 //     api_secret: '58qyQs40AuFUk_O1i8P1cbaivuI',
 //     secure: true
-// });
+// })
 
 //   
 const create = async (req, res, next) => {
@@ -67,10 +67,10 @@ const create = async (req, res, next) => {
         let info = {
             from: '"noreply@Allphanes"'+ process.env.AUTH_EMAIL, // sender address
             to: email, // list of receivers
-            subject: "Allphanes OTP Verification", // Subject line
-            html: "<h1>"+ randotp +"</h1><br><p>This OTP valid for 10 minutes</p>", // html body
+            subject: "Allphanes email Verification", // Subject line
+            html: "<h2>Please verify your Email</h2><h1>"+ randotp +"</h1><p>(This code is valid for 10 minutes)</p>", // html body
         }
-        await mail(info).catch(console.error);
+        await mail(info).catch(console.error)
 
         await usersModel.findOne({ email: email, phone : phone })
         .then(user => {
@@ -141,13 +141,13 @@ router.get('/',async(req,res)=>{
        res.json({ack:"0", status:500, message:"server error",error:err})
     }
 })
-// delete users id********************************************************************** /
+// delete users by id********************************************************************** /
 router.delete("/:id",async(req,res)=>{
     try{
         const deleted = await usersModel.findByIdAndRemove({_id : req.params.id})
-        if(deleted) res.json({ack:"1", status:200, message:"Deleted Successfully"});
+        if(deleted) res.json({ack:"1", status:200, message:"Deleted Successfully"})
     }catch(err){
-        res.json({ack:0, status:500, message:"server error",error:err});
+        res.json({ack:0, status:500, message:"server error",error:err})
     }
 })
 
@@ -246,6 +246,42 @@ router.post("/otpverification", async(req,res) => {
         res.json({ack:0, status:500, message:"server Error", error:err})
     }
 })
+// resend OTP ********************************************* _*/
+router.post("/resendotp", async(req,res) => {
+    try{
+        const id = req.body.id
+        const randotp = globalfunction.randNum(6)
+        const hashOTP = await bcrypt.hash(randotp, 10)
+
+        const currentDate = new Date()
+        let otpExp = new Date()
+        otpExp.setTime(currentDate.getTime() + (10 * 60 * 1000))
+
+        // console.log(id)
+    
+        await usersModel.findOne({_id: id})
+        .then(user =>{
+            if(!user) return res.json({ack:"0", status:400, message:"Cannot find user"})
+              
+            // mail function 
+            let info = {
+                from: '"noreply@Allphanes"'+ process.env.AUTH_EMAIL, // sender address
+                to: user.email, // list of receivers
+                subject: "Allphanes email Verification", // Subject line
+                html: "<h2>Please verify your Email</h2><h1>"+ randotp +"</h1><p>(This code is valid for 10 minutes)</p>", // html body
+            }
+            mail(info).catch(console.error)
+        
+            usersModel.findOneAndUpdate({ _id: id }, { $set: { otp: hashOTP, otpExpTime:  otpExp} }, function (err) {
+                if (err) return res.json({ "ack": 0, status: 401, message: err })
+                return res.json({ ack: "1", status: 200, message: "OTP send Successfully", otp: randotp})
+            })
+        })
+    }catch(err){
+        res.json({ack:0, status:500, message:"server Error", error:err})
+    }
+})
+
 
 // all Roueters ********************************************* _*/
 router.post('/create', create)
