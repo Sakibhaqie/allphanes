@@ -48,9 +48,9 @@ async function main() {
   let transporter = nodemailer.createTransport({
     host: "smtp-mail.outlook.com",
     // service: "hotmail",
-    // port: 587,
-    port: 465,
-    secure: true, // true for 465, false for other ports
+    port: 587,
+    // port: 465,
+    secure: false, // true for 465, false for other ports
     tls: {
         ciphers: "SSLv3",
         rejectUnauthorized: false,
@@ -63,9 +63,9 @@ async function main() {
 
   // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: '"noreply@"'+ process.env.AUTH_EMAIL, // sender address
+    from: '"noreply@Allphanes"'+ process.env.AUTH_EMAIL, // sender address
     to: email, // list of receivers
-    subject: "Allphanes OTP", // Subject line
+    subject: "Allphanes OTP Verification", // Subject line
     // text: "Hello world?", // plain text body
     html: "<h1>"+ randotp +"</h1><br><p>This OTP valid for 10 minutes</p>", // html body
   });
